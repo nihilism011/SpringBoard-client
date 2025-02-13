@@ -2,12 +2,14 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true
 })
 
 // accessToken
 axiosInstance.interceptors.request.use( req => {
     const accessToken = sessionStorage.getItem('accessToken');
-    if(accessToken) req.headers['accessToken'] = `Bearer ${accessToken}`;
+    if(accessToken) req.headers['Authorization'] = `Bearer ${accessToken}`;
+
     return req;
   }, async err => err)
 
@@ -15,10 +17,13 @@ axiosInstance.interceptors.request.use( req => {
 let isRefreshing = false;
 let refreshSubscribers: ((newToken: string) => void)[] = [];
 
-axiosInstance.interceptors.response.use( res => res,
+axiosInstance.interceptors.response.use( res => {
+
+  return res},
   async err => {
 
     const originReq = err.config;
+    console.log(err);
 
       if(err.response.status === 401 && !originReq._retry){
         originReq._retry = true;
@@ -36,7 +41,7 @@ axiosInstance.interceptors.response.use( res => res,
 
         try{
           const res = await axiosInstance.post('/refresh',{ withCredentials: true });
-          const newAccessToken = res.data.accessToken;
+          const newAccessToken = res.data.payload;
           sessionStorage.setItem('accessToken', newAccessToken);
           originReq.headers['Authorization'] = `Bearer ${newAccessToken}`
 
