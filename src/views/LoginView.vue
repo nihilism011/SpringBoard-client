@@ -19,7 +19,7 @@ import { ref } from 'vue';
   );
 
       sessionStorage.setItem('accessToken', res.data.payload);
-
+      console.log(res);
     } catch (e){
       console.log(e);
     }
@@ -36,12 +36,13 @@ import { ref } from 'vue';
         password: '1',
         name: '1'
       })
+      console.log(res);
 
     }" />
 
     <q-btn label="Test" color="primary" @click=" async ()=>{
        const res = await axiosInstance.get('/checkLogin')
-
+       console.log(res);
       }" />
 
     <q-dialog v-model="card" >
