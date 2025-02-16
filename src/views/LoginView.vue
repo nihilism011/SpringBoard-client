@@ -17,7 +17,6 @@ import { ref } from 'vue';
       }
     }
   );
-
       sessionStorage.setItem('accessToken', res.data.payload);
       console.log(res);
     } catch (e){
@@ -25,10 +24,22 @@ import { ref } from 'vue';
     }
 
   }
+  const logout = async () => {
+    try{
+      const res = await axiosInstance.post('/logout',{ withCredentials: true });
+      sessionStorage.removeItem('accessToken');
+      console.log(res);
+    } catch (e){
+      console.log(e);
+    }
+
+  }
+
 </script>
 <template>
   <div class="q-pa-md q-gutter-sm" >
     <q-btn label="Login" color="primary" @click="card = true" />
+    <q-btn label="Logout" color="primary" @click="logout" />
     <q-btn label="Join" color="primary" @click=" async ()=>{
        const res = await axiosInstance.post('/join',
        {
